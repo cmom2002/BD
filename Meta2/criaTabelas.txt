@@ -1,0 +1,145 @@
+CREATE TABLE produtos (
+	id_prod			 BIGINT,
+	nome				 VARCHAR(512) NOT NULL,
+	descricao			 VARCHAR(512) NOT NULL,
+	preco			 FLOAT(8) NOT NULL,
+	stock			 BIGINT NOT NULL,
+	vendedor_utilizadores_id_user BIGINT NOT NULL,
+	PRIMARY KEY(id_prod)
+);
+
+CREATE TABLE utilizadores (
+	id_user	 BIGINT,
+	username	 VARCHAR(512) NOT NULL,
+	email	 VARCHAR(512) NOT NULL,
+	password	 VARCHAR(512) NOT NULL,
+	administrador BOOL NOT NULL,
+	morada	 VARCHAR(512) NOT NULL,
+	PRIMARY KEY(id_user)
+);
+
+CREATE TABLE classificacao (
+	classificacao			 BIGINT NOT NULL,
+	comentario			 VARCHAR(512) NOT NULL,
+	comprador_utilizadores_id_user BIGINT NOT NULL,
+	produtos_id_prod		 BIGINT NOT NULL
+);
+
+CREATE TABLE encomendas (
+	id_enc			 BIGINT,
+	preco_total			 VARCHAR(512) NOT NULL,
+	cupao				 VARCHAR(512) NOT NULL,
+	data				 DATE NOT NULL,
+	comprador_utilizadores_id_user BIGINT NOT NULL,
+	PRIMARY KEY(id_enc)
+);
+
+CREATE TABLE historico (
+	id_hist		 BIGINT,
+	preco		 FLOAT(8) NOT NULL,
+	descricao	 VARCHAR(512) NOT NULL,
+	especificacoes	 VARCHAR(512) NOT NULL,
+	data		 TIMESTAMP NOT NULL,
+	produtos_id_prod BIGINT,
+	PRIMARY KEY(id_hist,produtos_id_prod)
+);
+
+CREATE TABLE campanha (
+	id_camp		 BIGINT,
+	descricao		 FLOAT(8) NOT NULL,
+	data_inicio		 TIMESTAMP NOT NULL,
+	data_fim		 TIMESTAMP NOT NULL,
+	numero_cupoes	 BIGINT NOT NULL,
+	desconto		 BIGINT NOT NULL,
+	validade_		 BIGINT NOT NULL,
+	utilizadores_id_user BIGINT NOT NULL,
+	PRIMARY KEY(id_camp)
+);
+
+CREATE TABLE qa (
+	id_qa				 BIGINT,
+	texto				 VARCHAR(512) NOT NULL,
+	qa_id_qa			 BIGINT NOT NULL,
+	comprador_utilizadores_id_user BIGINT NOT NULL,
+	produtos_id_prod		 BIGINT NOT NULL,
+	PRIMARY KEY(id_qa)
+);
+
+CREATE TABLE vendedor (
+	empresa		 VARCHAR(512) NOT NULL,
+	nif			 VARCHAR(512) NOT NULL,
+	utilizadores_id_user BIGINT,
+	PRIMARY KEY(utilizadores_id_user)
+);
+
+CREATE TABLE comprador (
+	tem_cupao		 BOOL NOT NULL,
+	utilizadores_id_user BIGINT,
+	PRIMARY KEY(utilizadores_id_user)
+);
+
+CREATE TABLE pc (
+	processador	 VARCHAR(512) NOT NULL,
+	produtos_id_prod BIGINT,
+	PRIMARY KEY(produtos_id_prod)
+);
+
+CREATE TABLE phone (
+	so		 VARCHAR(512) NOT NULL,
+	produtos_id_prod BIGINT,
+	PRIMARY KEY(produtos_id_prod)
+);
+
+CREATE TABLE tv (
+	tamanho		 VARCHAR(512) NOT NULL,
+	produtos_id_prod BIGINT,
+	PRIMARY KEY(produtos_id_prod)
+);
+
+CREATE TABLE lista_prods (
+	id_lista_prods	 BIGINT,
+	quantidade	 BIGINT NOT NULL,
+	encomendas_id_enc BIGINT NOT NULL,
+	produtos_id_prod	 BIGINT NOT NULL,
+	PRIMARY KEY(id_lista_prods)
+);
+
+CREATE TABLE notificacoes (
+	id_notif		 BIGINT,
+	titulo		 VARCHAR(512) NOT NULL,
+	conteudo		 VARCHAR(512) NOT NULL,
+	data		 TIMESTAMP NOT NULL,
+	utilizadores_id_user BIGINT NOT NULL,
+	PRIMARY KEY(id_notif)
+);
+
+CREATE TABLE cupao (
+	id_cup			 BIGINT,
+	data_aquisicao		 TIMESTAMP NOT NULL,
+	usado				 BOOL NOT NULL,
+	expirado			 BOOL NOT NULL,
+	comprador_utilizadores_id_user BIGINT NOT NULL,
+	campanha_id_camp		 BIGINT NOT NULL,
+	PRIMARY KEY(id_cup)
+);
+
+ALTER TABLE produtos ADD CONSTRAINT produtos_fk1 FOREIGN KEY (vendedor_utilizadores_id_user) REFERENCES vendedor(utilizadores_id_user);
+ALTER TABLE classificacao ADD CONSTRAINT classificacao_fk1 FOREIGN KEY (comprador_utilizadores_id_user) REFERENCES comprador(utilizadores_id_user);
+ALTER TABLE classificacao ADD CONSTRAINT classificacao_fk2 FOREIGN KEY (produtos_id_prod) REFERENCES produtos(id_prod);
+ALTER TABLE encomendas ADD CONSTRAINT encomendas_fk1 FOREIGN KEY (comprador_utilizadores_id_user) REFERENCES comprador(utilizadores_id_user);
+ALTER TABLE historico ADD CONSTRAINT historico_fk1 FOREIGN KEY (produtos_id_prod) REFERENCES produtos(id_prod);
+ALTER TABLE campanha ADD CONSTRAINT campanha_fk1 FOREIGN KEY (utilizadores_id_user) REFERENCES utilizadores(id_user);
+ALTER TABLE qa ADD CONSTRAINT qa_fk1 FOREIGN KEY (qa_id_qa) REFERENCES qa(id_qa);
+ALTER TABLE qa ADD CONSTRAINT qa_fk2 FOREIGN KEY (comprador_utilizadores_id_user) REFERENCES comprador(utilizadores_id_user);
+ALTER TABLE qa ADD CONSTRAINT qa_fk3 FOREIGN KEY (produtos_id_prod) REFERENCES produtos(id_prod);
+ALTER TABLE vendedor ADD CONSTRAINT vendedor_fk1 FOREIGN KEY (utilizadores_id_user) REFERENCES utilizadores(id_user);
+ALTER TABLE comprador ADD CONSTRAINT comprador_fk1 FOREIGN KEY (utilizadores_id_user) REFERENCES utilizadores(id_user);
+ALTER TABLE pc ADD CONSTRAINT pc_fk1 FOREIGN KEY (produtos_id_prod) REFERENCES produtos(id_prod);
+ALTER TABLE phone ADD CONSTRAINT phone_fk1 FOREIGN KEY (produtos_id_prod) REFERENCES produtos(id_prod);
+ALTER TABLE tv ADD CONSTRAINT tv_fk1 FOREIGN KEY (produtos_id_prod) REFERENCES produtos(id_prod);
+ALTER TABLE lista_prods ADD CONSTRAINT lista_prods_fk1 FOREIGN KEY (encomendas_id_enc) REFERENCES encomendas(id_enc);
+ALTER TABLE lista_prods ADD CONSTRAINT lista_prods_fk2 FOREIGN KEY (produtos_id_prod) REFERENCES produtos(id_prod);
+ALTER TABLE notificacoes ADD CONSTRAINT notificacoes_fk1 FOREIGN KEY (utilizadores_id_user) REFERENCES utilizadores(id_user);
+ALTER TABLE cupao ADD CONSTRAINT cupao_fk1 FOREIGN KEY (comprador_utilizadores_id_user) REFERENCES comprador(utilizadores_id_user);
+ALTER TABLE cupao ADD CONSTRAINT cupao_fk2 FOREIGN KEY (campanha_id_camp) REFERENCES campanha(id_camp);
+
